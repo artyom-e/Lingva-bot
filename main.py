@@ -33,6 +33,8 @@ def init_db():
             barrier TEXT,
             child_age TEXT,
             child_goal TEXT,
+            child_barrier TEXT,
+            preferences TEXT,
             reg_date TEXT
         )
     ''')
@@ -111,7 +113,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text="Начать анкетирование!", callback_data="step_gender"))
 
-    text = '''яяяяяяяяЗдравствуйте! Я Ольга Водянова, создатель Семейной языковой онлайн-школы Lingva Family.
+    text = '''Здравствуйте! Я Ольга Водянова, создатель Семейной языковой онлайн-школы Lingva Family.
 
 Спасибо, что вы с нами!
 Нам важно создавать для вас полезный контент, поэтому давайте познакомимся поближе. 
@@ -275,27 +277,6 @@ async def adult_q2_text_process(message: types.Message, state: FSMContext):
     # Выдаем подарок и идем к розыгрышу
     await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
     await ask_raffle(message, state)
-
-@dp.callback_query(Survey.adult_q2_other, F.data == "f_взрослый")
-async def adult_start(callback: types.CallbackQuery, state: FSMContext):
-    update_user_db(callback.from_user.id, "focus", "взрослый")
-
-    builder = InlineKeyboardBuilder()
-    options = [
-        ("✈️ Английский для путешествий", "int_travel"),
-        ("💼 Английский для работы", "int_work"),
-        ("🌍 Английский для переезда", "int_relocation"),
-        ("🎓 Подготовка к экзаменам", "int_exams"),
-        ("🗣 Разговорная практика", "int_speech"),
-        ("📚 Грамматика и структура языка", "int_grammar"),
-        ("🎥 Английский через фильмы", "int_movies"),
-        ("👶 Как помочь ребенку с английским", "int_child_help"),
-    ]
-    for text, val in options:
-        builder.row(types.InlineKeyboardButton(text=text, callback_data=val))
-
-    await callback.message.edit_text("Какой формат контента вы любите больше всего?", reply_markup=builder.as_markup())
-    await state.set_state(Survey.adult_q3)
 
 # --- ВЕТКА Б. ДЛЯ РОДИТЕЛЕЙ ---
 @dp.callback_query(Survey.focus, F.data.in_(["f_ребенок", "f_взрослый_и_ребенок"]))
