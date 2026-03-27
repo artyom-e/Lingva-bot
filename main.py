@@ -67,6 +67,7 @@ class Survey(StatesGroup):
     child_q2 = State() # Актуальность
     child_q3 = State() # Барьеры ребенка
     child_q3_other = State()
+    child_q4 = State()
     # Финал
     raffle_choice = State()
     awaiting_phone = State()
@@ -275,6 +276,26 @@ async def adult_q2_text_process(message: types.Message, state: FSMContext):
     await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
     await ask_raffle(message, state)
 
+@dp.callback_query(Survey.adult_q2_other, F.data == "f_взрослый")
+async def adult_start(callback: types.CallbackQuery, state: FSMContext):
+    update_user_db(callback.from_user.id, "focus", "взрослый")
+
+    builder = InlineKeyboardBuilder()
+    options = [
+        ("✈️ Английский для путешествий", "int_travel"),
+        ("💼 Английский для работы", "int_work"),
+        ("🌍 Английский для переезда", "int_relocation"),
+        ("🎓 Подготовка к экзаменам", "int_exams"),
+        ("🗣 Разговорная практика", "int_speech"),
+        ("📚 Грамматика и структура языка", "int_grammar"),
+        ("🎥 Английский через фильмы", "int_movies"),
+        ("👶 Как помочь ребенку с английским", "int_child_help"),
+    ]
+    for text, val in options:
+        builder.row(types.InlineKeyboardButton(text=text, callback_data=val))
+
+    await callback.message.edit_text("Какой формат контента вы любите больше всего?", reply_markup=builder.as_markup())
+    await state.set_state(Survey.adult_q3)
 
 # --- ВЕТКА Б. ДЛЯ РОДИТЕЛЕЙ ---
 @dp.callback_query(Survey.focus, F.data.in_(["f_ребенок", "f_взрослый_и_ребенок"]))
