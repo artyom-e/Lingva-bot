@@ -71,8 +71,26 @@ class Survey(StatesGroup):
     child_q3_other = State()
     child_q4 = State()
     # Финал
+    preferences = State()
     raffle_choice = State()
     awaiting_phone = State()
+
+async def ask_preferences(message: types.Message, state: FSMContext):
+    builder = InlineKeyboardBuilder()
+    builder.row(types.InlineKeyboardButton(text="📚 Полезные материалы", callback_data="pref_content"))
+    builder.row(types.InlineKeyboardButton(text="🎁 Акции и предложения", callback_data="pref_sales"))
+    builder.row(types.InlineKeyboardButton(text="🔥 Всё вместе", callback_data="pref_all"))
+    builder.row(types.InlineKeyboardButton(text="❌ Ничего не нужно", callback_data="pref_none"))
+
+    await message.answer("Какие рассылки вам были бы интересны?", reply_markup=builder.as_markup())
+    await state.set_state(Survey.preferences)
+
+@dp.callback_query(Survey.preferences, F.data.startswith("pref_"))
+async def process_preferences(callback: types.CallbackQuery, state: FSMContext):
+    pref_val = callback.data.replace("pref_", "")
+    update_user_db(callback.from_user.id, "preferences", pref_val)
+
+    await ask_raffle(callback.message, state)
 
 
 # --- КОМАНДА ВЫГРУЗКИ (Только для админа) ---
@@ -266,7 +284,7 @@ async def adult_q2_process(callback: types.CallbackQuery, state: FSMContext):
 
     # СРАЗУ выдаем подарок и идем к розыгрышу
     await callback.message.answer("🎁 Спасибо за честность! Ваш гайд для взрослых: [ССЫЛКА]")
-    await ask_raffle(callback.message, state)
+    await ask_preferences(callback.message, state)
 
 
 # Обработка текстового ввода для "Другое"
@@ -276,7 +294,7 @@ async def adult_q2_text_process(message: types.Message, state: FSMContext):
 
     # Выдаем подарок и идем к розыгрышу
     await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
-    await ask_raffle(message, state)
+    await ask_preferences(message, state)
 
 # --- ВЕТКА Б. ДЛЯ РОДИТЕЛЕЙ ---
 @dp.callback_query(Survey.focus, F.data.in_(["f_ребенок", "f_взрослый_и_ребенок"]))
@@ -355,7 +373,7 @@ async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
 
     # СРАЗУ выдаем подарок и идем к розыгрышу
     await callback.message.answer("🎁 Спасибо за честность! Ваш гайд для взрослых: [ССЫЛКА]")
-    await ask_raffle(callback.message, state)
+    await ask_preferences(callback.message, state)
 
 
 # Обработка текстового ввода для "Другое"
@@ -364,7 +382,7 @@ async def adult_q2_text_process(message: types.Message, state: FSMContext):
     update_user_db(message.from_user.id, "child_barrier", f"Другое: {message.text}")
     # Выдаем подарок и идем к розыгрышу
     await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
-    await ask_raffle(message, state)
+    await ask_preferences(message, state)
 
 async def ask_raffle(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
