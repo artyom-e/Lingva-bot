@@ -77,12 +77,12 @@ class Survey(StatesGroup):
 
 async def ask_preferences(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="📚 Полезные материалы", callback_data="pref_content"))
+    builder.row(types.InlineKeyboardButton(text="📖 Полезные посты / гайды", callback_data="pref_content"))
     builder.row(types.InlineKeyboardButton(text="🎁 Акции и предложения", callback_data="pref_sales"))
-    builder.row(types.InlineKeyboardButton(text="🔥 Всё вместе", callback_data="pref_all"))
-    builder.row(types.InlineKeyboardButton(text="❌ Ничего не нужно", callback_data="pref_none"))
+    builder.row(types.InlineKeyboardButton(text="🎬 Видео / Reels", callback_data="pref_all"))
+    builder.row(types.InlineKeyboardButton(text="📥 Чек-листы", callback_data="pref_none"))
 
-    await message.answer("Какие рассылки вам были бы интересны?", reply_markup=builder.as_markup())
+    await message.answer("Какой формат контента вы любите больше всего?", reply_markup=builder.as_markup())
     await state.set_state(Survey.preferences)
 
 @dp.callback_query(Survey.preferences, F.data.startswith("pref_"))
