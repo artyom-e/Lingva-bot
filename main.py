@@ -121,7 +121,49 @@ async def clear_database(message: types.Message):
 
     await message.answer("🧹 Таблица успешно очищена! Все данные удалены.")
 
+class Survey(StatesGroup):
+    ...
+    awaiting_phone = State()
+    # новый
+    post = State()
 
+@dp.message(Command("post"))
+async def start_broadcast(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+
+    await message.answer("Отправьте сообщение, которое нужно разослать всем пользователям.")
+    await state.set_state(Survey.post)
+
+@dp.message(Survey.post)
+async def process_broadcast(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+
+    conn = sqlite3.connect("survey_results.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT user_id FROM users")
+    users = cursor.fetchall()
+    conn.close()
+
+    success = 0
+    failed = 0
+
+    for (user_id,) in users:
+        try:
+            # Копируем сообщение как есть (самый простой способ)
+            await bot.copy_message(
+                chat_id=user_id,
+                from_chat_id=message.chat.id,
+                message_id=message.message_id
+            )
+            success += 1
+            await asyncio.sleep(0.05)  # чтобы не словить flood
+        except:
+            failed += 1
+
+    await message.answer(f"✅ Рассылка завершена\nУспешно: {success}\nОшибки: {failed}")
+    await state.clear()
 # --- ЛОГИКА ОПРОСА ---
 
 @dp.message(Command("start"))
