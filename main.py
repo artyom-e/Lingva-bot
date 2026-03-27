@@ -325,7 +325,7 @@ async def collect_child_goals(callback: types.CallbackQuery, state: FSMContext):
 
 
 
-@dp.callback_query(Survey.child_q2, F.data == "finish_child_goals")
+@dp.callback_query(Survey.child_q2)
 async def child_finish(callback: types.CallbackQuery, state: FSMContext):
     # Здесь переходим к вопросу А2 "Что вас останавливает"
     builder = InlineKeyboardBuilder()
