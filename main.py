@@ -111,7 +111,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text="Начать анкетирование!", callback_data="step_gender"))
 
-    text = '''Здравствуйте! Я Ольга Водянова, создатель Семейной языковой онлайн-школы Lingva Family.
+    text = '''яяяяяяяяЗдравствуйте! Я Ольга Водянова, создатель Семейной языковой онлайн-школы Lingva Family.
 
 Спасибо, что вы с нами!
 Нам важно создавать для вас полезный контент, поэтому давайте познакомимся поближе. 
