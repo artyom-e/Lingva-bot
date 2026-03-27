@@ -89,7 +89,6 @@ async def ask_preferences(message: types.Message, state: FSMContext):
 async def process_preferences(callback: types.CallbackQuery, state: FSMContext):
     pref_val = callback.data.replace("pref_", "")
     update_user_db(callback.from_user.id, "preferences", pref_val)
-
     await ask_raffle(callback.message, state)
 
 
@@ -282,8 +281,6 @@ async def adult_q2_process(callback: types.CallbackQuery, state: FSMContext):
     barrier_val = callback.data.replace("stop_", "")
     update_user_db(callback.from_user.id, "barrier", barrier_val)  # Сохраняем в БД
 
-    # СРАЗУ выдаем подарок и идем к розыгрышу
-    await callback.message.answer("🎁 Спасибо за честность! Ваш гайд для взрослых: [ССЫЛКА]")
     await ask_preferences(callback.message, state)
 
 
@@ -292,8 +289,6 @@ async def adult_q2_process(callback: types.CallbackQuery, state: FSMContext):
 async def adult_q2_text_process(message: types.Message, state: FSMContext):
     update_user_db(message.from_user.id, "barrier", f"Другое: {message.text}")
 
-    # Выдаем подарок и идем к розыгрышу
-    await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
     await ask_preferences(message, state)
 
 # --- ВЕТКА Б. ДЛЯ РОДИТЕЛЕЙ ---
@@ -370,9 +365,6 @@ async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
     barrier_val = callback.data.replace("stop_", "")
     update_user_db(callback.from_user.id, "child_barrier", barrier_val)  # Сохраняем в БД
 
-
-    # СРАЗУ выдаем подарок и идем к розыгрышу
-    await callback.message.answer("🎁 Спасибо за честность! Ваш гайд для взрослых: [ССЫЛКА]")
     await ask_preferences(callback.message, state)
 
 
@@ -380,11 +372,10 @@ async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
 @dp.message(Survey.child_q3_other)
 async def adult_q2_text_process(message: types.Message, state: FSMContext):
     update_user_db(message.from_user.id, "child_barrier", f"Другое: {message.text}")
-    # Выдаем подарок и идем к розыгрышу
-    await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
     await ask_preferences(message, state)
 
 async def ask_raffle(message: types.Message, state: FSMContext):
+    await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text="🎲 Участвую!", callback_data="raffle_yes"))
     builder.row(types.InlineKeyboardButton(text="🙏 Нет", callback_data="raffle_no"))
