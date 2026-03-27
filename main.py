@@ -314,20 +314,17 @@ async def child_q2_start(callback: types.CallbackQuery, state: FSMContext):
     await state.set_state(Survey.child_q2)
 
 
-# Сразу переходим к финалу после одного нажатия
+
+
+
+
+
+
 @dp.callback_query(Survey.child_q2, F.data.startswith("c_goal_"))
 async def collect_child_goals(callback: types.CallbackQuery, state: FSMContext):
     goal_val = callback.data.replace("c_goal_", "")
     update_user_db(callback.from_user.id, "child_goal", goal_val)
-    await state.set_state(Survey.child_q4)
 
-
-
-
-
-@dp.callback_query(Survey.child_q4, F.data.startswith("c_goal_"))
-async def child_finish(callback: types.CallbackQuery, state: FSMContext):
-    # Здесь переходим к вопросу А2 "Что вас останавливает"
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text="⏳ Не хватает времени", callback_data="stop_time"))
     builder.row(types.InlineKeyboardButton(text="💰 Сложно вписать в бюджет", callback_data="stop_money"))
