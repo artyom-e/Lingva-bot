@@ -36,7 +36,7 @@ def init_db():
             child_barrier TEXT,
             preferences TEXT,
             reg_date TEXT,
-            ticker_number INTEGER
+            ticket_number INTEGER
         )
     ''')
     conn.commit()
