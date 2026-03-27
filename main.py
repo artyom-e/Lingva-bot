@@ -319,7 +319,7 @@ async def child_q2_start(callback: types.CallbackQuery, state: FSMContext):
 async def collect_child_goals(callback: types.CallbackQuery, state: FSMContext):
     goal_val = callback.data.replace("c_goal_", "")
     update_user_db(callback.from_user.id, "child_goal", goal_val)
-
+    await state.set_state(Survey.child_q2)
 
 
 
