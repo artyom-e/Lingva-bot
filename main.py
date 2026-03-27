@@ -74,6 +74,7 @@ class Survey(StatesGroup):
     preferences = State()
     raffle_choice = State()
     awaiting_phone = State()
+    post = State()
 
 async def ask_preferences(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
@@ -121,11 +122,6 @@ async def clear_database(message: types.Message):
 
     await message.answer("🧹 Таблица успешно очищена! Все данные удалены.")
 
-class Survey(StatesGroup):
-    ...
-    awaiting_phone = State()
-    # новый
-    post = State()
 
 @dp.message(Command("post"))
 async def start_broadcast(message: types.Message, state: FSMContext):
