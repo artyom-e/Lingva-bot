@@ -368,7 +368,7 @@ async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
 
 
 # Обработка текстового ввода для "Другое"
-@dp.message(Survey.child_q3_other)
+@dp.message(Survey.child_q4)
 async def adult_q2_text_process(message: types.Message, state: FSMContext):
     update_user_db(message.from_user.id, "child_barrier", f"Другое: {message.text}")
     # Выдаем подарок и идем к розыгрышу
