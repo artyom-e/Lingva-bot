@@ -352,9 +352,19 @@ async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
     barrier_val = callback.data.replace("stop_", "")
     update_user_db(callback.from_user.id, "child_barrier", barrier_val)  # Сохраняем в БД
 
+    builder = InlineKeyboardBuilder()
+    builder.row(types.InlineKeyboardButton(text="⏳ Не хватает времени", callback_data="stop_time"))
+    builder.row(types.InlineKeyboardButton(text="💰 Сложно вписать в бюджет", callback_data="stop_money"))
+    builder.row(types.InlineKeyboardButton(text="😰 Боюсь, что ребёнок потеряет интерес", callback_data="stop_start"))
+    builder.row(types.InlineKeyboardButton(text="😴 Ребёнок не хочет", callback_data="stop_motivation"))
+    builder.row(types.InlineKeyboardButton(text="❓ Затруднения с выбором формата", callback_data="stop_format"))
+    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_other"))
+
+    await callback.message.edit_text("Что вас останавливает?", reply_markup=builder.as_markup())
+    await state.set_state(Survey.child_q4)
     # СРАЗУ выдаем подарок и идем к розыгрышу
-    await callback.message.answer("🎁 Спасибо за честность! Ваш гайд для взрослых: [ССЫЛКА]")
-    await ask_raffle(callback.message, state)
+   # await callback.message.answer("🎁 Спасибо за честность! Ваш гайд для взрослых: [ССЫЛКА]")
+    #await ask_raffle(callback.message, state)
 
 
 # Обработка текстового ввода для "Другое"
