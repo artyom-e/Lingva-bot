@@ -320,14 +320,59 @@ async def collect_child_goals(callback: types.CallbackQuery, state: FSMContext):
     goal_val = callback.data.replace("c_goal_", "")
     update_user_db(callback.from_user.id, "child_goal", goal_val)
 
-    await child_finish(callback, state)  # Переход к подарку и розыгрышу
+
+
 
 
 
 @dp.callback_query(Survey.child_q2, F.data == "finish_child_goals")
 async def child_finish(callback: types.CallbackQuery, state: FSMContext):
-    await callback.message.answer("🎁 Спасибо! Ваш гайд для родителей: [ССЫЛКА НА ДЕТСКИЙ ГАЙД]")
+    # Здесь переходим к вопросу А2 "Что вас останавливает"
+    builder = InlineKeyboardBuilder()
+    builder.row(types.InlineKeyboardButton(text="⏳ Не хватает времени", callback_data="stop_time"))
+    builder.row(types.InlineKeyboardButton(text="💰 Сложно вписать в бюджет", callback_data="stop_money"))
+    builder.row(types.InlineKeyboardButton(text="😰 Боюсь, что ребёнок потеряет интерес", callback_data="stop_start"))
+    builder.row(types.InlineKeyboardButton(text="😴 Ребёнок не хочет", callback_data="stop_motivation"))
+    builder.row(types.InlineKeyboardButton(text="❓ Затруднения с выбором формата", callback_data="stop_format"))
+    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_other"))
+
+    await callback.message.edit_text("Что вас останавливает?", reply_markup=builder.as_markup())
+    await state.set_state(Survey.child_q3)
+
+
+# Если пользователь выбрал "Другое" — просим написать текст
+@dp.callback_query(Survey.child_q3, F.data == "stop_other")
+async def child_q3_other_input(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.edit_text("Напишите, пожалуйста, что именно вам мешает заниматься?")
+    await state.set_state(Survey.child_q3_other)
+
+
+# Если пользователь выбрал любой готовый вариант (Одиночный выбор)
+@dp.callback_query(Survey.child_q3, F.data.startswith("stop_"))
+async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
+    # Если нажали "Другое", уходим в ввод текста и НЕ идем дальше
+    if callback.data == "stop_other":
+        await callback.message.edit_text("Напишите, пожалуйста, что именно вам мешает заниматься?")
+        await state.set_state(Survey.child_q3_other)
+        return
+
+    # Если выбрали обычный вариант
+    barrier_val = callback.data.replace("stop_", "")
+    update_user_db(callback.from_user.id, "child_barrier", barrier_val)  # Сохраняем в БД
+
+    # СРАЗУ выдаем подарок и идем к розыгрышу
+    await callback.message.answer("🎁 Спасибо за честность! Ваш гайд для взрослых: [ССЫЛКА]")
     await ask_raffle(callback.message, state)
+
+
+# Обработка текстового ввода для "Другое"
+@dp.message(Survey.child_q3_other)
+async def adult_q2_text_process(message: types.Message, state: FSMContext):
+    update_user_db(message.from_user.id, "child_barrier", f"Другое: {message.text}")
+
+    # Выдаем подарок и идем к розыгрышу
+    await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
+    await ask_raffle(message, state)
 
 
 async def ask_raffle(message: types.Message, state: FSMContext):
