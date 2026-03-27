@@ -189,6 +189,9 @@ async def process_broadcast(message: types.Message, state: FSMContext):
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.clear()
+
+    update_user_db(message.from_user.id, "username", f"@{message.from_user.username}")
+
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text="Начать анкетирование!", callback_data="step_gender"))
 
