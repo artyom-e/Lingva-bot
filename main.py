@@ -35,7 +35,8 @@ def init_db():
             child_goal TEXT,
             child_barrier TEXT,
             preferences TEXT,
-            reg_date TEXT
+            reg_date TEXT,
+            ticker_number INTEGER
         )
     ''')
     conn.commit()
@@ -75,6 +76,29 @@ class Survey(StatesGroup):
     raffle_choice = State()
     awaiting_phone = State()
     post = State()
+
+
+def assign_ticket_number(user_id):
+    conn = sqlite3.connect("survey_results.db")
+    cursor = conn.cursor()
+
+    # Проверяем, нет ли уже номера у этого пользователя
+    cursor.execute("SELECT ticket_number FROM users WHERE user_id = ?", (user_id,))
+    existing = cursor.fetchone()
+
+    if existing and existing[0] is not None:
+        conn.close()
+        return existing[0]
+
+    # Находим последний выданный номер
+    cursor.execute("SELECT MAX(ticket_number) FROM users")
+    last_num = cursor.fetchone()[0]
+    new_num = 1001 if last_num is None else last_num + 1  # Начнем, например, с 1001
+
+    cursor.execute("UPDATE users SET ticket_number = ? WHERE user_id = ?", (new_num, user_id))
+    conn.commit()
+    conn.close()
+    return new_num
 
 async def ask_preferences(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
@@ -158,7 +182,7 @@ async def process_broadcast(message: types.Message, state: FSMContext):
         except:
             failed += 1
 
-    await message.answer(f"✅ Рассылка завершена\nУспешно: {success}\nОшибки: {failed}")
+    await message.answer(f"✅ Рассылка завершена\nУспешно: {success}")
     await state.clear()
 # --- ЛОГИКА ОПРОСА ---
 
@@ -436,9 +460,21 @@ async def raffle_phone(callback: types.CallbackQuery, state: FSMContext):
 
 @dp.message(Survey.awaiting_phone, F.contact)
 async def finish(message: types.Message, state: FSMContext):
-    update_user_db(message.from_user.id, "phone", message.contact.phone_number)
-    update_user_db(message.from_user.id, "username", f"@{message.from_user.username}")
-    await message.answer("❤️ Спасибо! Вы в списке участников.", reply_markup=types.ReplyKeyboardRemove())
+    user_id = message.from_user.id
+    # Сохраняем контакт
+    update_user_db(user_id, "phone", message.contact.phone_number)
+    update_user_db(user_id, "username", f"@{message.from_user.username}")
+
+    # Присваиваем номер билета
+    ticket_id = assign_ticket_number(user_id)
+
+    text = (
+        f"❤️ **Спасибо! Вы в списке участников.**\n\n"
+        f"🎫 Ваш уникальный номер для розыгрыша: `{ticket_id}`\n"
+        f"Итоги подведем 7 мая 2026 года. Удачи!"
+    )
+
+    await message.answer(text, parse_mode="Markdown", reply_markup=types.ReplyKeyboardRemove())
     await state.clear()
 
 
