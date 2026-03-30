@@ -186,28 +186,41 @@ async def process_broadcast(message: types.Message, state: FSMContext):
     await state.clear()
 # --- ЛОГИКА ОПРОСА ---
 
-@dp.message(Command("start"))
-async def cmd_start(message: types.Message, state: FSMContext):
-    await state.clear()
 
-    update_user_db(message.from_user.id, "username", f"@{message.from_user.username}")
+flag = 1
+if flag == 1:
+    @dp.message(Command("start"))
+    async def cmd_start(message: types.Message, state: FSMContext):
+        await state.clear()
 
-    builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="Начать анкетирование!", callback_data="step_gender"))
+        update_user_db(message.from_user.id, "username", f"@{message.from_user.username}")
 
-    text = '''Здравствуйте! Я Ольга Водянова, создатель Семейной языковой онлайн-школы Lingva Family.
+        builder = InlineKeyboardBuilder()
+        builder.row(types.InlineKeyboardButton(text="Начать анкетирование!", callback_data="step_gender"))
 
-Спасибо, что вы с нами!
-Нам важно создавать для вас полезный контент, поэтому давайте познакомимся поближе. 
+        text = '''Здравствуйте! Я Ольга Водянова, создатель Семейной языковой онлайн-школы Lingva Family.
 
-Это честный разговор без рекламы и попытки что то продать.🙌
+    Спасибо, что вы с нами!
+    Нам важно создавать для вас полезный контент, поэтому давайте познакомимся поближе. 
 
-Пожалуйста, ответьте на несколько вопросов (2–3 минуты). В благодарность:
-• Полезный гайд каждому участнику
-• Вы автоматически участвуете в розыгрыше абонемента на занятия английским (итоги подведем 7 мая 2026 года)'''
-    await message.answer(text, reply_markup=builder.as_markup())
+    Это честный разговор без рекламы и попытки что то продать.🙌
 
+    Пожалуйста, ответьте на несколько вопросов (2–3 минуты). В благодарность:
+    • Полезный гайд каждому участнику
+    • Вы автоматически участвуете в розыгрыше абонемента на занятия английским (итоги подведем 7 мая 2026 года)'''
+        await message.answer(text, reply_markup=builder.as_markup())
 
+    @dp.callback_query(F.data == "step_gender")
+    async def ask_gender(callback: types.CallbackQuery, state: FSMContext):
+        builder = InlineKeyboardBuilder()
+        builder.add(types.InlineKeyboardButton(text="👩 Женский", callback_data="g_жен"))
+        builder.add(types.InlineKeyboardButton(text="👨 Мужской", callback_data="g_муж"))
+        await callback.message.answer("Вопрос 1. Пол\n\nВаш пол:", reply_markup=builder.as_markup())
+        await state.set_state(Survey.gender)
+else:
+    @dp.message(Command("start"))
+    async def cmd_start(message: types.Message, state: FSMContext):
+        await message.answer('gggg')
 
 
 @dp.callback_query(Survey.gender)
