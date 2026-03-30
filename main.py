@@ -11,7 +11,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 # --- Настройки ---
 TOKEN = "8794568508:AAHY_uhp2GcZmZaWULMIfv1naSUfZGEZ0tw"
-ADMIN_ID = 8071127858
+ADMIN_ID = 71131467
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
@@ -187,7 +187,7 @@ async def process_broadcast(message: types.Message, state: FSMContext):
 # --- ЛОГИКА ОПРОСА ---
 
 
-flag = 0
+flag = 1
 if flag == 1:
     @dp.message(Command("start"))
     async def cmd_start(message: types.Message, state: FSMContext):
