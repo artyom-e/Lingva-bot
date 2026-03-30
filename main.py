@@ -187,7 +187,7 @@ async def process_broadcast(message: types.Message, state: FSMContext):
 # --- ЛОГИКА ОПРОСА ---
 
 
-flag = 1
+flag = 0
 if flag == 1:
     @dp.message(Command("start"))
     async def cmd_start(message: types.Message, state: FSMContext):
