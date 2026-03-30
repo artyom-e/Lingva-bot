@@ -108,17 +108,8 @@ async def ask_preferences(message: types.Message, state: FSMContext):
     builder.row(types.InlineKeyboardButton(text="📥 Чек-листы", callback_data="pref_checklists"))
 
     await message.answer("Какой формат контента вы любите больше всего?", reply_markup=builder.as_markup())
-    await ask_money(message, state)
-
-async def ask_money(message: types.Message, state: FSMContext):
-    builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="📖 Полезные посты / гайды", callback_data="pref_guides"))
-    builder.row(types.InlineKeyboardButton(text="🎁 Акции и предложения", callback_data="pref_sales"))
-    builder.row(types.InlineKeyboardButton(text="🎬 Видео / Reels", callback_data="pref_reels"))
-    builder.row(types.InlineKeyboardButton(text="📥 Чек-листы", callback_data="pref_checklists"))
-
-    await message.answer("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
     await state.set_state(Survey.preferences)
+
 
 @dp.callback_query(Survey.preferences, F.data.startswith("pref_"))
 async def process_preferences(callback: types.CallbackQuery, state: FSMContext):
