@@ -128,7 +128,7 @@ async def ask_money(message: types.Message, state: FSMContext):
     builder.row(types.InlineKeyboardButton(text="💸 9000–15 000 ₽", callback_data="money_9000-15000"))
     builder.row(types.InlineKeyboardButton(text="💸 Любые деньги за результат", callback_data="money_15000+"))
 
-    await message.edit_text("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
+    await message.answer("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
     await state.set_state(Survey.money)
 
 
