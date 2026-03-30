@@ -35,6 +35,8 @@ def init_db():
             child_goal TEXT,
             child_barrier TEXT,
             preferences TEXT,
+            money TEXT,
+            importance TEXT,
             reg_date TEXT,
             ticket_number INTEGER
         )
@@ -73,6 +75,8 @@ class Survey(StatesGroup):
     child_q4 = State()
     # Финал
     preferences = State()
+    money = State()
+    importance = State()
     raffle_choice = State()
     awaiting_phone = State()
     post = State()
@@ -117,6 +121,41 @@ async def process_preferences(callback: types.CallbackQuery, state: FSMContext):
     update_user_db(callback.from_user.id, "preferences", pref_val)
     await ask_raffle(callback.message, state)
 
+async def ask_money(message: types.Message, state: FSMContext):
+    builder = InlineKeyboardBuilder()
+    builder.row(types.InlineKeyboardButton(text="💸 Не готов платить, ищу бесплатные ресурсы", callback_data="money_free"))
+    builder.row(types.InlineKeyboardButton(text="💸 2000–8000 ₽", callback_data="money_2000_8000"))
+    builder.row(types.InlineKeyboardButton(text="💸 9000–15 000 ₽", callback_data="money_9000_15000"))
+    builder.row(types.InlineKeyboardButton(text="💸 Любые деньги, если заговорю за 3 месяца", callback_data="money_infinity"))
+
+    await message.answer("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
+    await state.set_state(Survey.money)
+
+
+@dp.callback_query(Survey.money, F.data.startswith("money_"))
+async def process_money(callback: types.CallbackQuery, state: FSMContext):
+    money_val = callback.data.replace("money_", "")
+    update_user_db(callback.from_user.id, "money", money_val)
+    await ask_importance(callback.message, state)
+
+async def ask_importance(message: types.Message, state: FSMContext):
+    builder = InlineKeyboardBuilder()
+    builder.row(types.InlineKeyboardButton(text="🎯 Результат (заговорю за срок)", callback_data="imp_result"))
+    builder.row(types.InlineKeyboardButton(text="👩‍🏫 Преподаватель (живой, носитель, свой подход)", callback_data="imp_teacher"))
+    builder.row(types.InlineKeyboardButton(text="💰 Цена и акции", callback_data="imp_cost"))
+    builder.row(types.InlineKeyboardButton(text="📅 Удобное время / доступ в любое время", callback_data="imp_time"))
+    builder.row(types.InlineKeyboardButton(text="🧑‍💻 Удобная платформа / приложение", callback_data="imp_application"))
+    builder.row(types.InlineKeyboardButton(text="📝 Отзывы и рекомендации", callback_data="imp_review"))
+
+    await message.answer("Что для вас важнее всего при выборе курса/школы?", reply_markup=builder.as_markup())
+    await state.set_state(Survey.importance)
+
+
+@dp.callback_query(Survey.importance, F.data.startswith("imp_"))
+async def process_importance(callback: types.CallbackQuery, state: FSMContext):
+    imp_val = callback.data.replace("imp_", "")
+    update_user_db(callback.from_user.id, "importance", imp_val)
+    await ask_preferences(callback, state)
 
 # --- КОМАНДА ВЫГРУЗКИ (Только для админа) ---
 @dp.message(Command("export"))
@@ -445,7 +484,7 @@ async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
 @dp.message(Survey.child_q3_other)
 async def adult_q2_text_process(message: types.Message, state: FSMContext):
     update_user_db(message.from_user.id, "child_barrier", f"Другое: {message.text}")
-    await ask_preferences(message, state)
+    await ask_money(message, state)
 
 async def ask_raffle(message: types.Message, state: FSMContext):
     await message.answer("🎁 Спасибо! Ваш гайд готов для скачивания:")
