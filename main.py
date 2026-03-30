@@ -111,7 +111,7 @@ async def ask_preferences(message: types.Message, state: FSMContext):
     builder.row(types.InlineKeyboardButton(text="🎬 Видео / Reels", callback_data="pref_рилсы"))
     builder.row(types.InlineKeyboardButton(text="📥 Чек-листы", callback_data="pref_чек-листы"))
 
-    await message.answer("Какой формат контента вы любите больше всего?", reply_markup=builder.as_markup())
+    await message.edit_text("Какой формат контента вы любите больше всего?", reply_markup=builder.as_markup())
     await state.set_state(Survey.preferences)
 
 
@@ -124,11 +124,11 @@ async def process_preferences(callback: types.CallbackQuery, state: FSMContext):
 async def ask_money(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text="💸 Ищу бесплатные ресурсы", callback_data="money_бесплатно"))
-    builder.row(types.InlineKeyboardButton(text="💸 2000–8000 ₽", callback_data="money_2000_8000"))
-    builder.row(types.InlineKeyboardButton(text="💸 9000–15 000 ₽", callback_data="money_9000_15000"))
+    builder.row(types.InlineKeyboardButton(text="💸 2000–8000 ₽", callback_data="money_2000-8000"))
+    builder.row(types.InlineKeyboardButton(text="💸 9000–15 000 ₽", callback_data="money_9000-15000"))
     builder.row(types.InlineKeyboardButton(text="💸 Любые деньги за результат", callback_data="money_15000+"))
 
-    await message.answer("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
+    await message.edit_text("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
     await state.set_state(Survey.money)
 
 
@@ -147,7 +147,7 @@ async def ask_importance(message: types.Message, state: FSMContext):
     builder.row(types.InlineKeyboardButton(text="🧑‍💻 Удобная платформа", callback_data="imp_платформа"))
     builder.row(types.InlineKeyboardButton(text="📝 Отзывы и рекомендации", callback_data="imp_отзывы"))
 
-    await message.answer("Что для вас важнее всего при выборе курса/школы?", reply_markup=builder.as_markup())
+    await message.edit_text("Что для вас важнее всего при выборе курса/школы?", reply_markup=builder.as_markup())
     await state.set_state(Survey.importance)
 
 
