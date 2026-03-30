@@ -367,14 +367,14 @@ async def adult_q2_start(callback: types.CallbackQuery, state: FSMContext):
     builder.row(types.InlineKeyboardButton(text="😰 Страшно начать", callback_data="stop_страх"))
     builder.row(types.InlineKeyboardButton(text="😴 Не хватает мотивации", callback_data="stop_мотивация"))
     builder.row(types.InlineKeyboardButton(text="❓ Затруднения с выбором формата", callback_data="stop_формат"))
-    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_другое"))
+    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_other"))
 
     await callback.message.edit_text("Что вас останавливает?", reply_markup=builder.as_markup())
     await state.set_state(Survey.adult_q2)
 
 
 # Если пользователь выбрал "Другое" — просим написать текст
-@dp.callback_query(Survey.adult_q2, F.data == "stop_другое")
+@dp.callback_query(Survey.adult_q2, F.data == "stop_other")
 async def adult_q2_other_input(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.edit_text("Напишите, пожалуйста, что именно вам мешает заниматься?")
     await state.set_state(Survey.adult_q2_other)
@@ -382,9 +382,8 @@ async def adult_q2_other_input(callback: types.CallbackQuery, state: FSMContext)
 
 # Если пользователь выбрал любой готовый вариант (Одиночный выбор)
 @dp.callback_query(Survey.adult_q2, F.data.startswith("stop_"))
-async def adult_q2_process(callback: types.CallbackQuery, state: FSMContext):
-    # Если нажали "Другое", уходим в ввод текста и НЕ идем дальше
-    if callback.data == "stop_другое":
+async def adult_q2_process(callback: types.CallbackQuery, state: FSMContext):  # Если нажали "Другое", уходим в ввод текста и НЕ идем дальше
+    if callback.data == "stop_other":
         await callback.message.edit_text("Напишите, пожалуйста, что именно вам мешает заниматься?")
         await state.set_state(Survey.adult_q2_other)
         return
@@ -451,14 +450,14 @@ async def collect_child_goals(callback: types.CallbackQuery, state: FSMContext):
     builder.row(types.InlineKeyboardButton(text="😰 Боюсь, что ребёнок потеряет интерес", callback_data="stop_страх"))
     builder.row(types.InlineKeyboardButton(text="😴 Ребёнок не хочет", callback_data="stop_мотивация"))
     builder.row(types.InlineKeyboardButton(text="❓ Затруднения с выбором формата", callback_data="stop_формат"))
-    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_другое"))
+    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_other"))
 
     await callback.message.edit_text("Что вас останавливает?", reply_markup=builder.as_markup())
     await state.set_state(Survey.child_q3)
 
 
 # Если пользователь выбрал "Другое" — просим написать текст
-@dp.callback_query(Survey.child_q3, F.data == "stop_другое")
+@dp.callback_query(Survey.child_q3, F.data == "stop_other")
 async def child_q3_other_input(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.edit_text("Напишите, пожалуйста, что именно вам мешает заниматься?")
     await state.set_state(Survey.child_q3_other)
@@ -468,7 +467,7 @@ async def child_q3_other_input(callback: types.CallbackQuery, state: FSMContext)
 @dp.callback_query(Survey.child_q3, F.data.startswith("stop_"))
 async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
     # Если нажали "Другое", уходим в ввод текста и НЕ идем дальше
-    if callback.data == "stop_другое":
+    if callback.data == "stop_other":
         await callback.message.edit_text("Напишите, пожалуйста, что именно вам мешает заниматься?")
         await state.set_state(Survey.child_q3_other)
         return
