@@ -106,10 +106,10 @@ def assign_ticket_number(user_id):
 
 async def ask_preferences(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="📖 Полезные посты / гайды", callback_data="pref_guides"))
-    builder.row(types.InlineKeyboardButton(text="🎁 Акции и предложения", callback_data="pref_sales"))
-    builder.row(types.InlineKeyboardButton(text="🎬 Видео / Reels", callback_data="pref_reels"))
-    builder.row(types.InlineKeyboardButton(text="📥 Чек-листы", callback_data="pref_checklists"))
+    builder.row(types.InlineKeyboardButton(text="📖 Полезные посты / гайды", callback_data="pref_гайды"))
+    builder.row(types.InlineKeyboardButton(text="🎁 Акции и предложения", callback_data="pref_акции"))
+    builder.row(types.InlineKeyboardButton(text="🎬 Видео / Reels", callback_data="pref_рилсы"))
+    builder.row(types.InlineKeyboardButton(text="📥 Чек-листы", callback_data="pref_чек-листы"))
 
     await message.answer("Какой формат контента вы любите больше всего?", reply_markup=builder.as_markup())
     await state.set_state(Survey.preferences)
@@ -123,10 +123,10 @@ async def process_preferences(callback: types.CallbackQuery, state: FSMContext):
 
 async def ask_money(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="💸 Не готов платить, ищу бесплатные ресурсы", callback_data="money_free"))
+    builder.row(types.InlineKeyboardButton(text="💸 Ищу бесплатные ресурсы", callback_data="money_бесплатно"))
     builder.row(types.InlineKeyboardButton(text="💸 2000–8000 ₽", callback_data="money_2000_8000"))
     builder.row(types.InlineKeyboardButton(text="💸 9000–15 000 ₽", callback_data="money_9000_15000"))
-    builder.row(types.InlineKeyboardButton(text="💸 Любые деньги, если заговорю за 3 месяца", callback_data="money_infinity"))
+    builder.row(types.InlineKeyboardButton(text="💸 Любые деньги за результат", callback_data="money_15000+"))
 
     await message.answer("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
     await state.set_state(Survey.money)
@@ -140,12 +140,12 @@ async def process_money(callback: types.CallbackQuery, state: FSMContext):
 
 async def ask_importance(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="🎯 Результат (заговорю за срок)", callback_data="imp_result"))
-    builder.row(types.InlineKeyboardButton(text="👩‍🏫 Преподаватель (живой, носитель, свой подход)", callback_data="imp_teacher"))
-    builder.row(types.InlineKeyboardButton(text="💰 Цена и акции", callback_data="imp_cost"))
-    builder.row(types.InlineKeyboardButton(text="📅 Удобное время / доступ в любое время", callback_data="imp_time"))
-    builder.row(types.InlineKeyboardButton(text="🧑‍💻 Удобная платформа / приложение", callback_data="imp_application"))
-    builder.row(types.InlineKeyboardButton(text="📝 Отзывы и рекомендации", callback_data="imp_review"))
+    builder.row(types.InlineKeyboardButton(text="🎯 Результат", callback_data="imp_результат"))
+    builder.row(types.InlineKeyboardButton(text="👩‍🏫 Преподаватель", callback_data="imp_преподаватель"))
+    builder.row(types.InlineKeyboardButton(text="💰 Цена и акции", callback_data="imp_цена"))
+    builder.row(types.InlineKeyboardButton(text="📅 Удобное время", callback_data="imp_время"))
+    builder.row(types.InlineKeyboardButton(text="🧑‍💻 Удобная платформа", callback_data="imp_платформа"))
+    builder.row(types.InlineKeyboardButton(text="📝 Отзывы и рекомендации", callback_data="imp_отзывы"))
 
     await message.answer("Что для вас важнее всего при выборе курса/школы?", reply_markup=builder.as_markup())
     await state.set_state(Survey.importance)
@@ -330,14 +330,14 @@ async def adult_start(callback: types.CallbackQuery, state: FSMContext):
 
     builder = InlineKeyboardBuilder()
     options = [
-        ("✈️ Английский для путешествий", "int_travel"),
-        ("💼 Английский для работы", "int_work"),
-        ("🌍 Английский для переезда", "int_relocation"),
-        ("🎓 Подготовка к экзаменам", "int_exams"),
-        ("🗣 Разговорная практика", "int_speech"),
-        ("📚 Грамматика и структура языка", "int_grammar"),
-        ("🎥 Английский через фильмы", "int_movies"),
-        ("👶 Как помочь ребенку с английским", "int_child_help"),
+        ("✈️ Английский для путешествий", "int_путешествия"),
+        ("💼 Английский для работы", "int_работа"),
+        ("🌍 Английский для переезда", "int_переезд"),
+        ("🎓 Подготовка к экзаменам", "int_экзамены"),
+        ("🗣 Разговорная практика", "int_говорение"),
+        ("📚 Грамматика и структура языка", "int_грамматика"),
+        ("🎥 Английский через фильмы", "int_фильмы"),
+        ("👶 Как помочь ребенку с английским", "int_ребёнок"),
     ]
     for text, val in options:
         builder.row(types.InlineKeyboardButton(text=text, callback_data=val))
@@ -362,12 +362,12 @@ async def collect_interests(callback: types.CallbackQuery, state: FSMContext):
 async def adult_q2_start(callback: types.CallbackQuery, state: FSMContext):
     # Здесь переходим к вопросу А2 "Что вас останавливает"
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="⏳ Не хватает времени", callback_data="stop_time"))
-    builder.row(types.InlineKeyboardButton(text="💰 Сложно вписать в бюджет", callback_data="stop_money"))
-    builder.row(types.InlineKeyboardButton(text="😰 Страшно начать", callback_data="stop_start"))
-    builder.row(types.InlineKeyboardButton(text="😴 Не хватает мотивации", callback_data="stop_motivation"))
-    builder.row(types.InlineKeyboardButton(text="❓ Затруднения с выбором формата", callback_data="stop_format"))
-    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_other"))
+    builder.row(types.InlineKeyboardButton(text="⏳ Не хватает времени", callback_data="stop_время"))
+    builder.row(types.InlineKeyboardButton(text="💰 Сложно вписать в бюджет", callback_data="stop_деньги"))
+    builder.row(types.InlineKeyboardButton(text="😰 Страшно начать", callback_data="stop_страх"))
+    builder.row(types.InlineKeyboardButton(text="😴 Не хватает мотивации", callback_data="stop_мотивация"))
+    builder.row(types.InlineKeyboardButton(text="❓ Затруднения с выбором формата", callback_data="stop_формат"))
+    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_другое"))
 
     await callback.message.edit_text("Что вас останавливает?", reply_markup=builder.as_markup())
     await state.set_state(Survey.adult_q2)
@@ -393,7 +393,7 @@ async def adult_q2_process(callback: types.CallbackQuery, state: FSMContext):
     barrier_val = callback.data.replace("stop_", "")
     update_user_db(callback.from_user.id, "barrier", barrier_val)  # Сохраняем в БД
 
-    await ask_preferences(callback.message, state)
+    await ask_money(callback.message, state)
 
 
 # Обработка текстового ввода для "Другое"
@@ -401,7 +401,7 @@ async def adult_q2_process(callback: types.CallbackQuery, state: FSMContext):
 async def adult_q2_text_process(message: types.Message, state: FSMContext):
     update_user_db(message.from_user.id, "barrier", f"Другое: {message.text}")
 
-    await ask_preferences(message, state)
+    await ask_money(message, state)
 
 # --- ВЕТКА Б. ДЛЯ РОДИТЕЛЕЙ ---
 @dp.callback_query(Survey.focus, F.data.in_(["f_ребенок", "f_взрослый_и_ребенок"]))
@@ -425,12 +425,12 @@ async def child_q2_start(callback: types.CallbackQuery, state: FSMContext):
 
     builder = InlineKeyboardBuilder()
     goals = [
-        ("📚 Школьная программа", "c_goal_school"),
-        ("🎓 Экзамены (ЕГЭ/ОГЭ)", "c_goal_exams"),
-        ("🗣 Чтобы свободно говорил", "c_goal_speak"),
-        ("🎮 Интерес через игры", "c_goal_games"),
-        ("🌍 Переезд/Учеба", "c_goal_relocation"),
-        ("🧠 Просто присматриваюсь", "c_goal_looking")
+        ("📚 Школьная программа", "c_goal_школа"),
+        ("🎓 Экзамены (ЕГЭ/ОГЭ)", "c_goal_экзамены"),
+        ("🗣 Чтобы свободно говорил", "c_goal_говорение"),
+        ("🎮 Интерес через игры", "c_goal_игры"),
+        ("🌍 Переезд/Учеба", "c_goal_переезд"),
+        ("🧠 Просто присматриваюсь", "c_goal_разведка")
     ]
     for text, val in goals:
         builder.row(types.InlineKeyboardButton(text=text, callback_data=val))
@@ -446,12 +446,12 @@ async def collect_child_goals(callback: types.CallbackQuery, state: FSMContext):
     update_user_db(callback.from_user.id, "child_goal", goal_val)
 
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="⏳ Не хватает времени", callback_data="stop_time"))
-    builder.row(types.InlineKeyboardButton(text="💰 Сложно вписать в бюджет", callback_data="stop_money"))
-    builder.row(types.InlineKeyboardButton(text="😰 Боюсь, что ребёнок потеряет интерес", callback_data="stop_start"))
-    builder.row(types.InlineKeyboardButton(text="😴 Ребёнок не хочет", callback_data="stop_motivation"))
-    builder.row(types.InlineKeyboardButton(text="❓ Затруднения с выбором формата", callback_data="stop_format"))
-    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_other"))
+    builder.row(types.InlineKeyboardButton(text="⏳ Не хватает времени", callback_data="stop_время"))
+    builder.row(types.InlineKeyboardButton(text="💰 Сложно вписать в бюджет", callback_data="stop_деньги"))
+    builder.row(types.InlineKeyboardButton(text="😰 Боюсь, что ребёнок потеряет интерес", callback_data="stop_страх"))
+    builder.row(types.InlineKeyboardButton(text="😴 Ребёнок не хочет", callback_data="stop_мотивация"))
+    builder.row(types.InlineKeyboardButton(text="❓ Затруднения с выбором формата", callback_data="stop_формат"))
+    builder.row(types.InlineKeyboardButton(text="🧐 Другое", callback_data="stop_другое"))
 
     await callback.message.edit_text("Что вас останавливает?", reply_markup=builder.as_markup())
     await state.set_state(Survey.child_q3)
@@ -477,7 +477,7 @@ async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
     barrier_val = callback.data.replace("stop_", "")
     update_user_db(callback.from_user.id, "child_barrier", barrier_val)  # Сохраняем в БД
 
-    await ask_preferences(callback.message, state)
+    await ask_money(callback.message, state)
 
 
 # Обработка текстового ввода для "Другое"
