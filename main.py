@@ -208,13 +208,6 @@ async def cmd_start(message: types.Message, state: FSMContext):
     await message.answer(text, reply_markup=builder.as_markup())
 
 
-@dp.callback_query(F.data == "step_gender")
-async def ask_gender(callback: types.CallbackQuery, state: FSMContext):
-    builder = InlineKeyboardBuilder()
-    builder.add(types.InlineKeyboardButton(text="👩 Женский", callback_data="g_жен"))
-    builder.add(types.InlineKeyboardButton(text="👨 Мужской", callback_data="g_муж"))
-    await callback.message.answer("Вопрос 1. Пол\n\nВаш пол:", reply_markup=builder.as_markup())
-    await state.set_state(Survey.gender)
 
 
 @dp.callback_query(Survey.gender)
