@@ -11,7 +11,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 # --- Настройки ---
 TOKEN = "8794568508:AAHY_uhp2GcZmZaWULMIfv1naSUfZGEZ0tw"
-ADMIN_ID = 8071127858  #71131467
+ADMIN_ID = 71131467 #8143298121 #8071127858
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
