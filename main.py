@@ -440,8 +440,8 @@ async def adult_q2_text_process(message: types.Message, state: FSMContext):
     await ask_preferences(message, state)
 
 async def ask_raffle(message: types.Message, state: FSMContext):
-    await message.answer("🎁 Спасибо! Ваш гайд:")
-    await message.answer_document(types.FSInputFile("Гайд.pdf"))
+    await message.answer("🎁 Спасибо! Ваш гайд готов для скачивания:")
+    await message.answer_document(types.FSInputFile("guide.pdf"))
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text="🎲 Участвую!", callback_data="raffle_yes"))
     builder.row(types.InlineKeyboardButton(text="🙏 Нет", callback_data="raffle_no"))
