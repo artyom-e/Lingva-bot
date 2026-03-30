@@ -155,7 +155,7 @@ async def ask_importance(message: types.Message, state: FSMContext):
 async def process_importance(callback: types.CallbackQuery, state: FSMContext):
     imp_val = callback.data.replace("imp_", "")
     update_user_db(callback.from_user.id, "importance", imp_val)
-    await ask_preferences(callback, state)
+    await ask_preferences(callback.message, state)
 
 # --- КОМАНДА ВЫГРУЗКИ (Только для админа) ---
 @dp.message(Command("export"))
