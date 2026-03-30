@@ -221,7 +221,7 @@ async def ask_gender(callback: types.CallbackQuery, state: FSMContext):
 async def ask_age(callback: types.CallbackQuery, state: FSMContext):
     update_user_db(callback.from_user.id, "gender", callback.data.replace("g_", ""))
     builder = InlineKeyboardBuilder()
-    for a in ["📱18–24", "🧑25–34", "👨35–44", "👴45+"]:
+    for a in ["✨18–24", "✨25–34", "✨35–44", "✨45+"]:
         builder.row(types.InlineKeyboardButton(text=a, callback_data=f"age_{a}"))
     await callback.message.edit_text("Вопрос 2. Возраст\n\nВаш возраст?", reply_markup=builder.as_markup())
     await state.set_state(Survey.age)
@@ -440,7 +440,8 @@ async def adult_q2_text_process(message: types.Message, state: FSMContext):
     await ask_preferences(message, state)
 
 async def ask_raffle(message: types.Message, state: FSMContext):
-    await message.answer("🎁 Спасибо! Ваш гайд для взрослых: [ССЫЛКА]")
+    await message.answer("🎁 Спасибо! Ваш гайд:")
+    await message.answer_document(types.FSInputFile("Гайд.pdf"))
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text="🎲 Участвую!", callback_data="raffle_yes"))
     builder.row(types.InlineKeyboardButton(text="🙏 Нет", callback_data="raffle_no"))
