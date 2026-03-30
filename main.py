@@ -221,6 +221,7 @@ else:
     @dp.message(Command("start"))
     async def cmd_start(message: types.Message, state: FSMContext):
         await message.answer('gggg')
+        update_user_db(message.from_user.id, "username", f"@{message.from_user.username}")
 
 
 @dp.callback_query(Survey.gender)
