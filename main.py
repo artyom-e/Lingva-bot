@@ -11,7 +11,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 # --- Настройки ---
 TOKEN = "8794568508:AAHY_uhp2GcZmZaWULMIfv1naSUfZGEZ0tw"
-ADMIN_ID = 8071127858 #71131467
+ADMIN_ID = 71131467 #71131467 8071127858
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
@@ -171,7 +171,7 @@ async def process_importance(callback: types.CallbackQuery, state: FSMContext):
 async def ask_subscribe(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
-    builder.row(types.InlineKeyboardButton(text='✅ ✅ Да, меньше года', callback_data='sub_недавно'))
+    builder.row(types.InlineKeyboardButton(text='✅ Да, меньше года', callback_data='sub_недавно'))
     builder.row(types.InlineKeyboardButton(text='✅ Только подписался', callback_data='sub_сейчас'))
     builder.row(types.InlineKeyboardButton(text='✅ Пока нет', callback_data='sub_нет'))
 
