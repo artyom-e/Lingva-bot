@@ -171,9 +171,9 @@ async def process_importance(callback: types.CallbackQuery, state: FSMContext):
 async def ask_subscribe(message: types.Message, state: FSMContext):
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
-    builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
-    builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
-    builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
+    builder.row(types.InlineKeyboardButton(text='✅ ✅ Да, меньше года', callback_data='sub_недавно'))
+    builder.row(types.InlineKeyboardButton(text='✅ Только подписался', callback_data='sub_сейчас'))
+    builder.row(types.InlineKeyboardButton(text='✅ Пока нет', callback_data='sub_нет'))
 
     await message.edit_text('Вы являетесь подписчиком блога Lingva Family?', reply_markup=builder.as_markup())
     await state.set_state(Survey.subscriber)
