@@ -11,7 +11,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 # --- Настройки ---
 TOKEN = "8794568508:AAHY_uhp2GcZmZaWULMIfv1naSUfZGEZ0tw"
-ADMIN_ID = 71131467 #8143298121 #8071127858
+ADMIN_ID = 8071127858 #71131467
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
@@ -37,6 +37,7 @@ def init_db():
             preferences TEXT,
             money TEXT,
             importance TEXT,
+            subscriber TEXT,
             reg_date TEXT,
             ticket_number INTEGER
         )
@@ -75,6 +76,7 @@ class Survey(StatesGroup):
     child_q4 = State()
     # Финал
     preferences = State()
+    subscriber = State()
     money = State()
     importance = State()
     raffle_choice = State()
@@ -164,6 +166,22 @@ async def ask_importance(message: types.Message, state: FSMContext):
 async def process_importance(callback: types.CallbackQuery, state: FSMContext):
     imp_val = callback.data.replace("imp_", "")
     update_user_db(callback.from_user.id, "importance", imp_val)
+    await ask_subscribe(callback.message, state)
+
+async def ask_subscribe(message: types.Message, state: FSMContext):
+    builder = InlineKeyboardBuilder()
+    builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
+    builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
+    builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
+    builder.row(types.InlineKeyboardButton(text='✅ Да, давно', callback_data='sub_давно'))
+
+    await message.edit_text('Вы являетесь подписчиком блога Lingva Family?', reply_markup=builder.as_markup())
+    await state.set_state(Survey.subscriber)
+
+@dp.callback_query(Survey.subscriber, F.data.startswith("sub_"))
+async def process_subscriber(callback: types.CallbackQuery, state: FSMContext):
+    subscriber_val = callback.data.replace("sub_", "")
+    update_user_db(callback.from_user.id, "subscriber", subscriber_val)
     await ask_preferences(callback.message, state)
 
 # --- КОМАНДА ВЫГРУЗКИ (Только для админа) ---
