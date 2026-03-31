@@ -8,9 +8,14 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+TOKEN = os.getenv("BOT_TOKEN")
 
 # --- Настройки ---
-TOKEN = "8794568508:AAHY_uhp2GcZmZaWULMIfv1naSUfZGEZ0tw"
 ADMIN_ID = 71131467 #71131467 8071127858
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
