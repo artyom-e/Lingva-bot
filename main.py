@@ -131,6 +131,15 @@ async def ask_money(message: types.Message, state: FSMContext):
     await message.answer("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
     await state.set_state(Survey.money)
 
+async def ask_money2(message: types.Message, state: FSMContext):
+    builder = InlineKeyboardBuilder()
+    builder.row(types.InlineKeyboardButton(text="💸 Ищу бесплатные ресурсы", callback_data="money_бесплатно"))
+    builder.row(types.InlineKeyboardButton(text="💸 2000–8000 ₽", callback_data="money_2000-8000"))
+    builder.row(types.InlineKeyboardButton(text="💸 9000–15 000 ₽", callback_data="money_9000-15000"))
+    builder.row(types.InlineKeyboardButton(text="💸 Любые деньги за результат", callback_data="money_15000+"))
+
+    await message.edit_text("Сколько вы готовы платить за изучение иностранного языка?", reply_markup=builder.as_markup())
+    await state.set_state(Survey.money)
 
 @dp.callback_query(Survey.money, F.data.startswith("money_"))
 async def process_money(callback: types.CallbackQuery, state: FSMContext):
@@ -392,7 +401,7 @@ async def adult_q2_process(callback: types.CallbackQuery, state: FSMContext):  #
     barrier_val = callback.data.replace("stop_", "")
     update_user_db(callback.from_user.id, "barrier", barrier_val)  # Сохраняем в БД
 
-    await ask_money(callback.message, state)
+    await ask_money2(callback.message, state)
 
 
 # Обработка текстового ввода для "Другое"
@@ -476,7 +485,7 @@ async def child_q3_process(callback: types.CallbackQuery, state: FSMContext):
     barrier_val = callback.data.replace("stop_", "")
     update_user_db(callback.from_user.id, "child_barrier", barrier_val)  # Сохраняем в БД
 
-    await ask_money(callback.message, state)
+    await ask_money2(callback.message, state)
 
 
 # Обработка текстового ввода для "Другое"
