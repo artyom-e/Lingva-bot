@@ -16,7 +16,7 @@ load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 
 # --- Настройки ---
-ADMIN_ID = 71131467 #71131467 8071127858
+ADMIN_ID = 8071127858
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
